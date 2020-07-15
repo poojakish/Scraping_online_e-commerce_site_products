@@ -67,10 +67,13 @@ while n<6:
 df = pd.DataFrame({'Product Name':products,'Price':prices,'rating':ratings})
 #if u want to store the dataframe in csv file include the line 69.
 #df.to_csv('testing3.csv', index=True, encoding='utf-8')
+
+#storing the data in PostgreSql
 engine= create_engine(" ")#format: "postgresql://Username:password@host_name/database_name".
 df.to_sql(name="scraping_test2",con=engine.connect())
 conn=psycopg2.connect(user=" ",password=" ",host=" ",port=" ",database=" ")#Enter Your Postgres Details.
 cursor=conn.cursor()
+#Finding the best product which has a best minimum price. Performed using the sql command.
 cursor.execute('select * from scraping_test2 where "Price"=(select Min("Price") from scraping_test2)')
 data=cursor.fetchall()
 print("the least cost prduct:")
