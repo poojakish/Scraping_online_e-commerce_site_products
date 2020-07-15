@@ -1,4 +1,4 @@
-# Scraping_online_e-commerce_site_products
+# Scraping online e-commerce site products
 
 ### Scraping:
 Scraping is a data extraction method. These data can be used for data analysis and it is useful for the analysing the rating given by the users. This code scrapes the products from flipkart.
