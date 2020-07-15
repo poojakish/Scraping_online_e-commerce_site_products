@@ -10,6 +10,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 import psycopg2
 
+#Selecting the product chosen by the user
 def urlselection(x):
     if x==1:
         print("You have selected laptop")
@@ -24,24 +25,25 @@ def urlselection(x):
         print("You have selected ac")
         url="https://www.flipkart.com/air-conditioners/pr?sid=j9e,abm,c54&p[]=facets.fulfilled_by%255B%255D%3DFlipkart%2BAssured&p[]=facets.technology%255B%255D%3DInverter&p[]=facets.serviceability%5B%5D%3Dtrue&otracker=categorytree"
     return(url)
-driver = webdriver.Chrome(executable_path="E:\\chromedriver.exe", service_args=["--verbose", "--log-path=E:\\qc1.log"])
+driver = webdriver.Chrome(executable_path="E:\\chromedriver.exe", service_args=["--verbose", "--log-path=E:\\qc1.log"])#chromedrive 
 products=[] #List to store name of the product
 prices=[] #List to store price of the product#List to store rating of the product
 n=2
 ratings=[]#list to store the rating
-x=int(input("Enter 1 for laptops 2 for washing machine 3 for television and 4 for air conditioner"))
+x=int(input("Enter 1 for laptops 2 for washing machine 3 for television and 4 for air conditioner:"))
 url=urlselection(x)
 while n<6:
   driver.get(url)
   content = driver.page_source
   soup = BeautifulSoup(content,features="lxml")
   for a in soup.findAll('a',href=True, attrs={'class':'_31qSD5'}):
-     name=a.find('div', attrs={'class':'_3wU53n'})
-     price=a.find('div', attrs={'class':'_1vC4OE _2rQ-NK'})
-     rating=a.find('div',attrs={'class':'hGSR34'})
+     name=a.find('div', attrs={'class':'_3wU53n'})#name of the products is read
+     price=a.find('div', attrs={'class':'_1vC4OE _2rQ-NK'})#price of the product is read 
+     rating=a.find('div',attrs={'class':'hGSR34'})#rating of the product
      products.append(name.text)
      s=price.text
      tex=0
+     #checking if the product rating is not given
      try:
        ratings.append(rating.text)
        tex=rating.text
@@ -49,18 +51,23 @@ while n<6:
          tex=0
          ratings.append('0')
      badch=["₹","$",","]
+     #Removing the badch symbols in the price
      for i in badch:
          s=s.replace(i,"")
      prices.append(str(s))
      print(name.text,price.text,tex)
   url_tag=soup.find('a',{'class':'_3fVaIS'})
+  #Moving to the next page
   if n==2:
       url=url+"&page="+str(n)
   else:
       url=url[:-1]+str(n)
   n=n+1
-df = pd.DataFrame({'Product Name':products,'Price':prices,'rating':ratings}) 
-engine= create_engine(" ")# postgresql://Username:password@host_name/database_name
+#Saving the details in a data frame.
+df = pd.DataFrame({'Product Name':products,'Price':prices,'rating':ratings})
+#if u want to store the dataframe in csv file include the line 69.
+#df.to_csv('testing3.csv', index=True, encoding='utf-8')
+engine= create_engine(" ")#format: "postgresql://Username:password@host_name/database_name".
 df.to_sql(name="scraping_test2",con=engine.connect())
 conn=psycopg2.connect(user=" ",password=" ",host=" ",port=" ",database=" ")#Enter Your Postgres Details.
 cursor=conn.cursor()
